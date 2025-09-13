@@ -12,6 +12,7 @@ PalletTown_ProfessorOaksLab_MapScripts::
 	.byte 0
 
 PalletTown_ProfessorOaksLab_OnTransition::
+	special EnableNationalPokedex
 	setflag FLAG_VISITED_OAKS_LAB
 	call_if_eq VAR_MAP_SCENE_PALLET_TOWN_PROFESSOR_OAKS_LAB, 1, PalletTown_ProfessorOaksLab_EventScript_ReadyOakForStarterScene
 	call_if_eq VAR_MAP_SCENE_PALLET_TOWN_PROFESSOR_OAKS_LAB, 7, PalletTown_ProfessorOaksLab_EventScript_ReadyOakForNationalDexScene
