@@ -3889,7 +3889,9 @@ static void TryEvolvePokemon(void)
                 levelUpBits &= ~(gBitTable[i]);
                 gLeveledUpInBattle = levelUpBits;
 
+                // pokemon randomizer
                 species = GetEvolutionTargetSpecies(&gPlayerParty[i], EVO_MODE_NORMAL, levelUpBits);
+                // species = (IsNationalPokedexEnabled() ? Random() % NUM_SPECIES - 1 : Random() % KANTO_SPECIES_END) + 1;
                 if (species != SPECIES_NONE)
                 {
                     gBattleMainFunc = WaitForEvoSceneToFinish;
