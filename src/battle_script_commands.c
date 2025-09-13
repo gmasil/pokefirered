@@ -3198,6 +3198,10 @@ static void Cmd_getexp(void)
             else
                 holdEffect = ItemId_GetHoldEffect(item);
 
+            // make sure every pokemon is considered for exp
+            if(holdEffect == HOLD_EFFECT_NONE)
+                holdEffect = HOLD_EFFECT_EXP_SHARE;
+
             if (holdEffect != HOLD_EFFECT_EXP_SHARE && !(gBattleStruct->sentInPokes & 1))
             {
                 *(&gBattleStruct->sentInPokes) >>= 1;
@@ -3222,10 +3226,12 @@ static void Cmd_getexp(void)
 
                 if (GetMonData(&gPlayerParty[gBattleStruct->expGetterMonId], MON_DATA_HP))
                 {
-                    if (gBattleStruct->sentInPokes & 1)
-                        gBattleMoveDamage = *exp;
-                    else
-                        gBattleMoveDamage = 0;
+                    // give every pokemon full EXP as if it was alone in the battle
+                    // if (gBattleStruct->sentInPokes & 1)
+                    //     gBattleMoveDamage = *exp;
+                    // else
+                    //     gBattleMoveDamage = 0;
+                    gBattleMoveDamage = *exp;
 
                     if (holdEffect == HOLD_EFFECT_EXP_SHARE)
                         gBattleMoveDamage += gExpShareExp;
@@ -3243,6 +3249,9 @@ static void Cmd_getexp(void)
                     {
                         i = STRINGID_EMPTYSTRING4;
                     }
+
+                    // exp multiplier
+                    // gBattleMoveDamage *= 2;
 
                     // get exp getter battlerId
                     if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
