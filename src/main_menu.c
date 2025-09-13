@@ -251,7 +251,20 @@ static void Task_SetWin0BldRegsAndCheckSaveFile(u8 taskId)
         case SAVE_STATUS_ERROR:
             SetStdFrame0OnBg(0);
             gTasks[taskId].tMenuType = MAIN_MENU_CONTINUE;
-            PrintSaveErrorStatus(taskId, gText_SaveFileCorrupted);
+
+            // for SRAM patch: do not show save corruption message
+            // SRAM does not support multiple bank savegames,
+            // this message would show every time even if a missing
+            // second bank is expected
+            ClearWindowTilemap(MAIN_MENU_WINDOW_ERROR);
+            MainMenu_EraseWindow(&sWindowTemplate[MAIN_MENU_WINDOW_ERROR]);
+            LoadUserFrameToBg(0);
+            gTasks[taskId].func = Task_PrintMainMenuText;
+            BeginNormalPaletteFade(PALETTES_ALL, 0, 16, 0, 0xFFFF);
+            ShowBg(0);
+            SetVBlankCallback(VBlankCB_MainMenu);
+            // end SRAM patch
+
             if (IsMysteryGiftEnabled() == TRUE)
             {
                 gTasks[taskId].tMenuType = MAIN_MENU_MYSTERYGIFT;
