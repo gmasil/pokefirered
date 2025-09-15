@@ -92,6 +92,7 @@ static bool8 StartCB_Save2(void);
 static void StartMenu_PrepareForSave(void);
 static u8 RunSaveDialogCB(void);
 static void task50_save_game(u8 taskId);
+static u8 SaveDialogCB_FastSave(void);
 static u8 SaveDialogCB_PrintAskSaveText(void);
 static u8 SaveDialogCB_AskSavePrintYesNoMenu(void);
 static u8 SaveDialogCB_AskSaveHandleInput(void);
@@ -604,7 +605,8 @@ static bool8 StartCB_Save2(void)
 static void StartMenu_PrepareForSave(void)
 {
     SaveMapView();
-    sSaveDialogCB = SaveDialogCB_PrintAskSaveText;
+    // sSaveDialogCB = SaveDialogCB_PrintAskSaveText;
+    sSaveDialogCB = SaveDialogCB_FastSave;
     sSaveDialogIsPrinting = FALSE;
 }
 
@@ -664,7 +666,7 @@ static void CloseSaveStatsWindow_(void)
 
 static void SetSaveDialogDelayTo60Frames(void)
 {
-    sSaveDialogDelay = 60;
+    sSaveDialogDelay = 10;
 }
 
 static bool8 SaveDialog_Wait60FramesOrAButtonHeld(void)
@@ -703,6 +705,17 @@ static bool8 SaveDialog_Wait60FramesThenCheckAButtonHeld(void)
         sSaveDialogDelay--;
         return FALSE;
     }
+}
+
+static u8 SaveDialogCB_FastSave(void)
+{
+    ClearStdWindowAndFrame(GetStartMenuWindowId(), FALSE);
+    RemoveStartMenuWindow();
+    DestroyHelpMessageWindow(0);
+    PrintSaveStats();
+    SaveQuestLogData();
+    PrintSaveTextWithFollowupFunc(gText_SavingDontTurnOffThePower, SaveDialogCB_DoSave);
+    return SAVECB_RETURN_CONTINUE;
 }
 
 static u8 SaveDialogCB_PrintAskSaveText(void)
