@@ -75,21 +75,11 @@ BattleScript_SuccessBallThrow::
 	incrementgamestat GAME_STAT_POKEMON_CAPTURES
 BattleScript_SafariNoIncGameStat::
 	printstring STRINGID_GOTCHAPKMNCAUGHT
-	trysetcaughtmondexflags BattleScript_CaughtPokemonSkipNewDex
+	trysetcaughtmondexflags BattleScript_CaughtPokemonSkipNickname
 	printstring STRINGID_PKMNDATAADDEDTODEX
 	waitstate
 	setbyte gBattleCommunication, 0
 	displaydexinfo
-BattleScript_CaughtPokemonSkipNewDex::
-	printstring STRINGID_GIVENICKNAMECAPTURED
-	waitstate
-	setbyte gBattleCommunication, 0
-	trygivecaughtmonnick BattleScript_CaughtPokemonSkipNickname
-	givecaughtmon
-	printfromtable gCaughtMonStringIds
-	waitmessage B_WAIT_TIME_LONG
-	goto BattleScript_CaughtPokemonDone
-
 BattleScript_CaughtPokemonSkipNickname::
 	givecaughtmon
 BattleScript_CaughtPokemonDone::
