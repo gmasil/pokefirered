@@ -3251,7 +3251,7 @@ static void Cmd_getexp(void)
                     }
 
                     // exp multiplier
-                    // gBattleMoveDamage *= 2;
+                    gBattleMoveDamage /= 2.0f;
 
                     // get exp getter battlerId
                     if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
