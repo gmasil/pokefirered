@@ -4,8 +4,9 @@
 #include <string.h>
 
 #include "image_utils.h"
+#include "tile_utils.h"
 
-Image image_read_from_file(char *filename, Palette palette) {
+Image image_read_from_file_with_palette(char *filename, Palette palette) {
     Image image;
 
     FILE *file = fopen(filename, "rb");
@@ -24,6 +25,54 @@ Image image_read_from_file(char *filename, Palette palette) {
     image.height = png_get_image_height(image.png, image.info);
 
     // png_get_PLTE(image.png, image.info, &(image.palette), &(image.palette_size));
+
+    fclose(file);
+
+    return image;
+}
+
+Image image_read_from_file_with_given_palette(char *filename, Palette palette) {
+    Image image;
+
+    FILE *file = fopen(filename, "rb");
+
+    image.png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    image.info = png_create_info_struct(image.png);
+
+    png_set_quantize(image.png, palette.colors, palette.size, palette.size, NULL, 1);
+
+    png_init_io(image.png, file);
+    png_read_png(image.png, image.info, PNG_TRANSFORM_EXPAND, NULL);
+
+    image.rows = png_get_rows(image.png, image.info);
+
+    image.width = png_get_image_width(image.png, image.info);
+    image.height = png_get_image_height(image.png, image.info);
+
+    // png_get_PLTE(image.png, image.info, &(image.palette), &(image.palette_size));
+
+    fclose(file);
+
+    return image;
+}
+
+Image image_read_from_file_with_integrated_palette(char *filename, Palette *palette) {
+    Image image;
+
+    FILE *file = fopen(filename, "rb");
+
+    image.png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    image.info = png_create_info_struct(image.png);
+
+    png_init_io(image.png, file);
+    png_read_png(image.png, image.info, PNG_TRANSFORM_IDENTITY, NULL);
+
+    image.rows = png_get_rows(image.png, image.info);
+
+    image.width = png_get_image_width(image.png, image.info);
+    image.height = png_get_image_height(image.png, image.info);
+
+    png_get_PLTE(image.png, image.info, &(palette->colors), &(palette->size));
 
     fclose(file);
 
@@ -84,6 +133,8 @@ Image image_create_unscrambled(Palette palette, Tilemap tilemap, Image tile_imag
 
     Image target_image = image_create_new(tilemap.columns * tile_size, tilemap.rows * tile_size, palette);
 
+    int max_source_tile_x = (int) tile_image.width / tile_size;
+    int max_source_tile_y = (int) tile_image.height / tile_size;
     unsigned char *current_data = tilemap.data;
     int target_tile_x = 0;
     int target_tile_y = 0;
@@ -92,11 +143,11 @@ Image image_create_unscrambled(Palette palette, Tilemap tilemap, Image tile_imag
             int source_tile_number = *current_data;
             int source_tile_x = source_tile_number;
             int source_tile_y = 0;
-            while(source_tile_x >= 12){
-                source_tile_x -= 12;
+            while(source_tile_x >= max_source_tile_x){
+                source_tile_x -= max_source_tile_x;
                 source_tile_y++;
             }
-            if (source_tile_y < 12) {
+            if (source_tile_y < max_source_tile_y) {
                 copy_tile(tile_image, target_image, source_tile_x, source_tile_y, target_tile_x, target_tile_y, tile_size);
             }
 
@@ -111,4 +162,26 @@ Image image_create_unscrambled(Palette palette, Tilemap tilemap, Image tile_imag
     }
 
     return target_image;
+}
+
+Tile image_extract_tile(Image image, int tile_x, int tile_y, int tile_size) {
+    Tile tile;
+    tile.data = malloc(tile_size * tile_size * sizeof(unsigned char));
+    memset(tile.data, 0, tile_size * tile_size * sizeof(unsigned char));
+    for (int x = 0; x < tile_size; x++) {
+        for (int y = 0; y < tile_size; y++) {
+            tile.data[y * tile_size + x] = image.rows[tile_y * tile_size + y][tile_x * tile_size + x];
+        }
+    }
+    return tile;
+}
+
+void image_apply_tile(Image image, int tile_x, int tile_y, Tile tile, int tile_size) {
+    for(int x = 0; x < tile_size; x++){
+        for(int y = 0; y < tile_size; y++){
+            unsigned char xxx = tile.data[y * tile_size + x];
+            // printf("color xxx=%d\n", xxx);
+            image.rows[tile_y*tile_size+y][tile_x*tile_size+x] = xxx;
+        }
+    }
 }

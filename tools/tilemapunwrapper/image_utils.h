@@ -5,6 +5,7 @@
 
 #include "palette_utils.h"
 #include "tilemap_utils.h"
+#include "tile_utils.h"
 
 typedef struct {
     png_structp png;
@@ -14,12 +15,15 @@ typedef struct {
     png_bytepp rows;
 } Image;
 
-Image image_read_from_file(char *filename, Palette palette);
+Image image_read_from_file_with_given_palette(char *filename, Palette palette);
+Image image_read_from_file_with_integrated_palette(char *filename, Palette *palette);
 Image image_create_new(int width, int height, Palette palette);
 void image_free(Image image);
 void image_write_to_file(char *filename, Image image);
 void copy_tile(Image source, Image target, int source_tile_x, int source_tile_y, int target_tile_x, int target_tile_y, int tile_size);
 Image image_create_unscrambled(Palette palette, Tilemap tilemap, Image tile_image, int tile_size);
 void image_free(Image image);
+Tile image_extract_tile(Image image, int tile_x, int tile_y, int tile_size);
+void image_apply_tile(Image image, int tile_x, int tile_y, Tile tile, int tile_size);
 
 #endif // IMAGE_UTILS_H

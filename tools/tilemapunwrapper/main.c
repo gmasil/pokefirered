@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <string.h>
 
 #include "file_utils.h"
@@ -27,7 +28,7 @@ int main_untile(char *base_filename) {
     // read files
     Palette palette = palette_read_from_file(palette_filename);
     Tilemap tilemap = tilemap_read_from_file(tilemap_filename, 32);
-    Image tile_image = image_read_from_file(tile_image_filename, palette);
+    Image tile_image = image_read_from_file_with_given_palette(tile_image_filename, palette);
 
     // unscramble image
     Image target_image = image_create_unscrambled(palette, tilemap, tile_image, 8);
@@ -44,15 +45,68 @@ int main_untile(char *base_filename) {
 }
 
 int main_tile(char *filename) {
-    printf("Not implemented: %s\n", filename);
-    return -1;
-}
+    int tile_size = 8;
 
-int string_ends_with(const char *text, const char *postfix) {
-    size_t text_length = strlen(text);
-    size_t postfix_length = strlen(postfix);
-    if (postfix_length > text_length) return 1;
-    return strcmp(text + text_length - postfix_length, postfix);
+    int postfix_length;
+    if (string_ends_with(filename, "_unwrapped.png") == 0) {
+        postfix_length = strlen("_unwrapped.png");
+    } else {
+        postfix_length = strlen(".png");
+    }
+    char *base_filename = malloc(strlen(filename)-postfix_length+1);
+    strncpy(base_filename, filename, strlen(filename)-postfix_length);
+    base_filename[strlen(filename)-postfix_length] = '\0';
+
+    char *palette_filename = filename_add_postfix(base_filename, ".pal");
+    char *tilemap_filename = filename_add_postfix(base_filename, ".bin");
+    char *tile_image_filename = filename_add_postfix(base_filename, ".png");
+
+    Palette palette;
+    Image image = image_read_from_file_with_integrated_palette(filename, &palette);
+    palette_write_to_file(palette_filename, palette);
+
+    Tiles tiles = tile_create_list(tile_size, 255);
+
+    int max_tile_x = image.width / tile_size;
+    int max_tile_y = image.height / tile_size;
+    unsigned char *tilemap = malloc(2 * max_tile_x *  max_tile_y * sizeof(unsigned char));
+    memset(tilemap, 0b11010000, 2 * max_tile_x * max_tile_y * sizeof(unsigned char));
+    int tilemap_index = 0;
+    for (int y = 0; y < max_tile_y; y++) {
+        for (int x = 0; x < max_tile_x; x++) {
+            Tile tile = image_extract_tile(image, x, y, tile_size);
+            tilemap[tilemap_index] = tile_add_to_list(&tiles, tile);
+            tile_free(tile);
+            tilemap_index += 2;
+        }
+    }
+
+    // find out tiles per row to make the tiled image as squared as possible
+    int tiles_per_row = 0;
+    while (tiles_per_row * tiles_per_row < tiles.used_count) {
+        tiles_per_row++;
+    }
+    printf("create image with pal size %d\n", palette.size);
+    Image tile_image = image_create_new(tiles_per_row*tile_size, tiles_per_row*tile_size, palette);
+    int index = 0;
+    for (int y = 0; y < tiles_per_row; y++) {
+        for (int x = 0; x < tiles_per_row; x++) {
+            if (index < tiles.used_count) {
+                image_apply_tile(tile_image, x, y, tiles.list[index], tile_size);
+            }
+            index++;
+        }
+    }
+    image_write_to_file(tile_image_filename, tile_image);
+
+    remove(tilemap_filename);
+    FILE *file = fopen(tilemap_filename, "wb");
+    fwrite(tilemap, sizeof(unsigned char), 2 * max_tile_x *  max_tile_y, file);
+    fclose(file);
+
+    free(tilemap);
+
+    return -1;
 }
 
 int main(int argc, char **argv) {
@@ -72,11 +126,11 @@ int main(int argc, char **argv) {
             return main_tile(argv[2]);
         }
         // for development
-        if (strcmp(argv[1], "test-untile") == 0) {
-            return main_untile("../../graphics/title_screen/firered/box_art_mon");
-        }
-        if (strcmp(argv[1], "test-tile") == 0) {
-            return main_tile("../../graphics/title_screen/firered/box_art_mon_unwrapped.pn");
+        if (strcmp(argv[1], "test") == 0) {
+            // main_untile("../../graphics/title_screen/firered/box_art_mon");
+            main_tile("../../graphics/title_screen/firered/box_art_mon_unwrapped.png");
+            // remove("../../graphics/title_screen/firered/box_art_mon_unwrapped.png");
+            return 0;
         }
         // autodetect if tile or untile is meant
         if (string_ends_with(argv[1], ".png") == 0) {

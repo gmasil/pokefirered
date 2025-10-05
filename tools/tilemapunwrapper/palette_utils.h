@@ -9,6 +9,7 @@ typedef struct {
 } Palette;
 
 Palette palette_read_from_file(char *filename);
+void palette_write_to_file(char *filename, Palette palette);
 void palette_free(Palette palette);
 
 #endif // PALETTE_UTILS_H

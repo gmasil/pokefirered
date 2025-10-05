@@ -31,3 +31,10 @@ char *filename_add_postfix(char *basename, char* postfix) {
     strcat(filename, postfix);
     return filename;
 }
+
+int string_ends_with(const char *text, const char *postfix) {
+    size_t text_length = strlen(text);
+    size_t postfix_length = strlen(postfix);
+    if (postfix_length > text_length) return 1;
+    return strcmp(text + text_length - postfix_length, postfix);
+}

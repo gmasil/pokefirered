@@ -58,6 +58,17 @@ Palette palette_read_from_file(char *filename) {
     return palette;
 }
 
+void palette_write_to_file(char *filename, Palette palette) {
+    remove(filename);
+    FILE *file = fopen(filename, "w");
+    fprintf(file, "JASC-PAL\r\n0100\r\n");
+    fprintf(file, "%d\r\n", palette.size);
+    for (int i = 0; i < palette.size; i++) {
+        fprintf(file, "%d %d %d\r\n", palette.colors[i].red, palette.colors[i].green, palette.colors[i].blue);
+    }
+    fclose(file);
+}
+
 void palette_free(Palette palette) {
     free(palette.colors);
 }

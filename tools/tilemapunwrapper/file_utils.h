@@ -6,5 +6,6 @@
 int file_get_size(FILE *file);
 char *file_read_all_content(char *filename);
 char *filename_add_postfix(char *basename, char* postfix);
+int string_ends_with(const char *text, const char *postfix);
 
 #endif // FILE_UTILS_H
