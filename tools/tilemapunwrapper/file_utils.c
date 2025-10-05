@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include "file_utils.h"
 
+#include <string.h>
+
 int file_get_size(FILE *file){
     fseek(file, 0L, SEEK_END);
     int size = ftell(file);
@@ -21,4 +23,11 @@ char *file_read_all_content(char *filename) {
     content[fsize] = 0;
 
     return content;
+}
+
+char *filename_add_postfix(char *basename, char* postfix) {
+    char *filename = malloc((strlen(basename) + strlen(postfix) + 1) * sizeof(char));
+    strcpy(filename, basename);
+    strcat(filename, postfix);
+    return filename;
 }
