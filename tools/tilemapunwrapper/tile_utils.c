@@ -16,7 +16,6 @@ unsigned char tile_add_to_list(Tiles *tiles, Tile tile) {
     for (int i = 0; i < tiles->used_count; i++) {
         if (tile_compare(tiles->list[i], tile, tiles->tile_size) == 0) {
             // return index of tile
-            printf("found tile existing at index %d\n", i);
             return i;
         }
     }
@@ -25,7 +24,6 @@ unsigned char tile_add_to_list(Tiles *tiles, Tile tile) {
         printf("Warning: cannot add another tile to tile list, the list is full.");
         return -1;
     }
-    printf("added new tile at index %d\n", tiles->used_count);
     Tile new_tile = {};
     new_tile.data = malloc(tiles->tile_size * tiles->tile_size * sizeof(unsigned char));
     memcpy(new_tile.data, tile.data, tiles->tile_size * tiles->tile_size * sizeof(unsigned char));

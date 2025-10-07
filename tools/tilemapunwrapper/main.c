@@ -80,13 +80,13 @@ int main_tile(char *filename) {
             tilemap_index += 2;
         }
     }
+    printf("tile count: %d\n", tiles.used_count);
 
     // find out tiles per row to make the tiled image as squared as possible
     int tiles_per_row = 0;
     while (tiles_per_row * tiles_per_row < tiles.used_count) {
         tiles_per_row++;
     }
-    printf("create image with pal size %d\n", palette.size);
     Image tile_image = image_create_new(tiles_per_row*tile_size, tiles_per_row*tile_size, palette);
     int index = 0;
     for (int y = 0; y < tiles_per_row; y++) {
