@@ -34,11 +34,6 @@ unsigned char tile_add_to_list(Tiles *tiles, Tile tile) {
 }
 
 int tile_compare(Tile a, Tile b, int tile_size) {
-    for (int i = 0; i < tile_size * tile_size; i++) {
-        unsigned char bc = b.data[i];
-        unsigned char ac = a.data[i];
-
-    }
     return memcmp(a.data, b.data, tile_size * tile_size);
 }
 

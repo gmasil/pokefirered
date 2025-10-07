@@ -106,7 +106,7 @@ int main_tile(char *filename) {
 
     free(tilemap);
 
-    return -1;
+    return 0;
 }
 
 int main(int argc, char **argv) {

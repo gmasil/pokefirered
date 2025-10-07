@@ -483,6 +483,12 @@ $(TITLESCREENGFXDIR)/firered/box_art_mon.4bpp: %.4bpp: %.png
 $(TITLESCREENGFXDIR)/leafgreen/box_art_mon.4bpp: %.4bpp: %.png
 	$(GFX) $< $@ -num_tiles 123 -Wnum_tiles
 
+$(TITLESCREENGFXDIR)/gyarados/box_art_mon.png: $(TITLESCREENGFXDIR)/gyarados/box_art_mon_unwrapped.png
+	$(TILEMAPUNWRAPPER) $<
+
+$(TITLESCREENGFXDIR)/gyarados/box_art_mon.4bpp: %.4bpp: %.png
+	$(GFX) $< $@ -num_tiles 79 -Wnum_tiles
+
 POKEDEXAREAMARKERSDATADIR := graphics/pokedex/area_markers
 
 POKEDEXAREAMARKERFILES := \
