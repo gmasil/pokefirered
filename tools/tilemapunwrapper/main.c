@@ -81,7 +81,6 @@ int main_tile(char *filename) {
             tilemap_index += 2;
         }
     }
-    printf("tile count: %d\n", tiles.used_count);
     // write tile count into file for use in makefile
     remove(tile_count_filename);
     FILE *tile_count_file = fopen(tile_count_filename, "wb");
