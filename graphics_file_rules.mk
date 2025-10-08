@@ -487,7 +487,7 @@ $(TITLESCREENGFXDIR)/gyarados/box_art_mon.png: $(TITLESCREENGFXDIR)/gyarados/box
 	$(TILEMAPUNWRAPPER) $<
 
 $(TITLESCREENGFXDIR)/gyarados/box_art_mon.4bpp: %.4bpp: %.png
-	$(GFX) $< $@ -num_tiles 79 -Wnum_tiles
+	$(GFX) $< $@ -num_tiles $(file < $(<:.png=.tilecount)) -Wnum_tiles
 
 POKEDEXAREAMARKERSDATADIR := graphics/pokedex/area_markers
 

@@ -60,6 +60,7 @@ int main_tile(char *filename) {
     char *palette_filename = filename_add_postfix(base_filename, ".pal");
     char *tilemap_filename = filename_add_postfix(base_filename, ".bin");
     char *tile_image_filename = filename_add_postfix(base_filename, ".png");
+    char *tile_count_filename = filename_add_postfix(base_filename, ".tilecount");
 
     Palette palette;
     Image image = image_read_from_file_with_integrated_palette(filename, &palette);
@@ -81,6 +82,11 @@ int main_tile(char *filename) {
         }
     }
     printf("tile count: %d\n", tiles.used_count);
+    // write tile count into file for use in makefile
+    remove(tile_count_filename);
+    FILE *tile_count_file = fopen(tile_count_filename, "wb");
+    fprintf(tile_count_file, "%d", tiles.used_count);
+    fclose(tile_count_file);
 
     // find out tiles per row to make the tiled image as squared as possible
     int tiles_per_row = 0;
