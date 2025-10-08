@@ -1637,7 +1637,7 @@ static const u16 sHMMoves[] =
     MOVE_ROCK_SMASH, MOVE_WATERFALL, MOVE_DIVE, HM_MOVES_END
 };
 
-#if defined(FIRERED)
+#if defined(FIRERED) || defined(GYARADOS)
 // Attack forme
 static const u16 sDeoxysBaseStats[] = 
 {

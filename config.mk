@@ -34,7 +34,13 @@ ifeq ($(GAME_VERSION),LEAFGREEN)
   GAME_CODE   := BPG
   BUILD_NAME  := leafgreen
 else
+ifeq ($(GAME_VERSION),GYARADOS)
+  TITLE       := POKEMON GYAR
+  GAME_CODE   := GYR
+  BUILD_NAME  := gyarados
+else
   $(error unknown version $(GAME_VERSION))
+endif
 endif
 endif
 
