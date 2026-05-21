@@ -133,7 +133,7 @@ int main(int argc, char **argv) {
         // for development
         if (strcmp(argv[1], "test") == 0) {
             // main_untile("../../graphics/title_screen/firered/box_art_mon");
-            main_tile("../../graphics/title_screen/firered/box_art_mon_unwrapped.png");
+            main_tile("../../graphics/title_screen/gyarados/box_art_mon_unwrapped.png");
             // remove("../../graphics/title_screen/firered/box_art_mon_unwrapped.png");
             return 0;
         }
